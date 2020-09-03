@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sample.dao.IUserDao">
+    <!-- 配置查询所有操作 -->
+    <select id="findAll" resultType="com.sample.domain.User"> select * from user </select>
+
+    <!--根据ID查询 -->
+    <select id="findById" resultType="com.sample.domain.User" parameterType="int">
+        select * from user where id = #{uid}
+    </select>
+
+    <!-- 保存用户-->
+    <insert id="saveUser" parameterType="com.sample.domain.User"
+        useGeneratedKeys="true" keyProperty="id">
+        insert into user(username, birthday, sex, address) values(#{username}, #{birthday}, #{sex}, #{address})
+    </insert>
+
+    <!-- 更新用户 -->
+    <update id="updateUser" parameterType="com.sample.domain.User">
+            update user set username=#{username}, birthday=#{birthday},
+            sex=#{sex}, address=#{address} where id=#{id}
+    </update>
+
+    <!-- 聚合查询-->
+    <select id="count" resultType="int">
+        select count(*) from user
+    </select>
+
+
+    <!-- 根据用户名模糊查询，参数为基本类型String -->
+    <select id="findByName" resultType="com.sample.domain.User" parameterType="String">
+        select * from user where username like #{username}
+    </select>
+
+    <!-- 根据用户名模糊查询，参数为基本类型String,占位符做少数改动 -->
+    <select id="findByName2" resultType="com.sample.domain.User" parameterType="String">
+        select * from user where username like '%${username}%'
+    </select>
+
+
+    <!-- 根据用户名模糊查询，参数为QuaryVo对象 -->
+    <select id="findByVo" resultType="com.sample.domain.User"
+    parameterType="com.sample.domain.QueryVo">
+        select * from user where username like #{name} and address like #{address};
+
+    </select>
+
+    <!-- 根据实体不同选择性查询，参数为QueryVo对象-->
+    <select id="findByVo2" resultType="com.sample.domain.User"
+    parameterType="com.sample.domain.QueryVo">
+        select * from user where 1=1
+        <if test="name != null and name !=''">
+        and username like #{name}
+        </if>
+        <if test="address != null and address != ''">
+        and address like #{address}
+        </if>
+    </select>
+
+</mapper>
